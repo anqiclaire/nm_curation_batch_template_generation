@@ -37,7 +37,8 @@ class batch_curation():
         self.base_dir_abspath = os.path.abspath(base_dir)
         self.master_template_abspath = os.path.abspath(os.path.join(base_dir,
             master_template))
-        self.zipped_datafiles_abspath = os.path.abspath(zipped_datafiles)
+        self.zipped_datafiles_abspath = os.path.abspath(os.path.join(base_dir,
+            zipped_datafiles))
         self.master_template_name = 'master_template.xlsx' # default name
         self.output_dir = os.path.join(self.base_dir_abspath,
             'batch_template_output') if output_dir is None else output_dir
