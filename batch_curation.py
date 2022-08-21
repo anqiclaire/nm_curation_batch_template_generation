@@ -40,7 +40,10 @@ class batch_curation():
         self.zipped_datafiles_abspath = os.path.abspath(zipped_datafiles)
         self.master_template_name = 'master_template.xlsx' # default name
         self.output_dir = os.path.join(self.base_dir_abspath,
-            'batch_template_output.zip') if output_dir is None else output_dir
+            'batch_template_output') if output_dir is None else output_dir
+        # trim .zip
+        if self.output_dir[-4:] == '.zip':
+           self.output_dir = self.output_dir[:-4]
         # load mapping
         self.df = self.read_mapping(self.base_dir_abspath, mapping_tabular)
         # run
