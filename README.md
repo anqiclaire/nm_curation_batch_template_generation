@@ -10,16 +10,17 @@ Batch master template generation for batch curation of computational (FEA/MD) da
 1. A zip file that is constructed with the following structure:
 
 <pre>output.zip
-  ∟ $sample_id1
-    ∟ master_template.xlsx
-    ∟ appendix_1.csv
-    ∟ appendix_2.mat
-    ∟ appendix_3.inp
-    ...
-  ∟ $sample_id2
-    ∟ master_template.xlsx
-    ∟ appendix_1.csv
-    ∟ appendix_2.mat
-    ∟ appendix_3.inp
-    ...
-  ... </pre>
+  ∟ output
+    ∟ $sample_id1
+      ∟ master_template.xlsx
+      ∟ appendix_1.csv
+      ∟ appendix_2.mat
+      ∟ appendix_3.inp
+      ...
+    ∟ $sample_id2
+      ∟ master_template.xlsx
+      ∟ appendix_1.csv
+      ∟ appendix_2.mat
+      ∟ appendix_3.inp
+      ...
+    ... </pre>
