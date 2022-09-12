@@ -1,6 +1,13 @@
 # nm_curation_batch_template_generation
 Batch master template generation for batch curation of computational (FEA/MD) data into NanoMine.
 
+### Install
+
+Clone the repo, cd into the repo and run
+```
+pip install -r requirements.txt
+```
+
 ### Input
 1. A tabular file (.xlsx/.csv/.tsv) that lists values of varying parameters for each sample to be curated. The first column should be the sample id, the first row should be the set of special placeholders, e.g. *$sample_id*, *$intph_thick*, etc. See example/example_mapping.xlsx for reference.
 2. A master template with cells that do not change among the samples filled with values, and cells that change filled with the corresponding special placeholders as described above. See example/example_template.xlsx for reference.
