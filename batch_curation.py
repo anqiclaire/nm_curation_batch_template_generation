@@ -13,11 +13,12 @@ import zipfile
 
 class batch_curation():
     def __init__(self, base_dir, master_template, mapping_tabular,
-            zipped_datafiles, output_dir=None):
+            zipped_datafiles, output_zip=None):
         '''
         Input:
         :param base_dir: base directory of the master template, mapping tabular 
-            file, zipped datafiles.
+            file, zipped datafiles. Output zip file will also be constructed in
+            base directory.
         :type base_dir: str
         
         :param master_template: file name of the master template. *.xlsx
@@ -30,21 +31,22 @@ class batch_curation():
         :param zipped_datafiles: file name of the zipped datafiles. *.zip
         :type zipped_datafiles: str
 
-        :param output_dir: directory to output the constructed zip file for
-            batch curation. Default to base_dir.
-        :type output_dir: str or NoneType
+        :param output_zip: file name of the constructed zip file for batch
+            curation. Default to {base_dir}/batch_template_output.zip
+        :type output_zip: str or NoneType
         '''
         self.base_dir_abspath = os.path.abspath(base_dir)
         self.master_template_abspath = os.path.abspath(os.path.join(base_dir,
             master_template))
         self.zipped_datafiles_abspath = os.path.abspath(os.path.join(base_dir,
             zipped_datafiles))
-        self.master_template_name = 'master_template.xlsx' # default name
-        self.output_dir = os.path.join(self.base_dir_abspath,
-            'batch_template_output') if output_dir is None else output_dir
+        # default name of the generated master template in the sample folders
+        self.master_template_name = 'master_template.xlsx'
+        self.output_zip = os.path.join(self.base_dir_abspath,
+            output_zip or 'batch_template_output')
         # trim .zip
-        if self.output_dir[-4:] == '.zip':
-           self.output_dir = self.output_dir[:-4]
+        if self.output_zip[-4:] == '.zip':
+           self.output_zip = self.output_zip[:-4]
         # load mapping
         self.df = self.read_mapping(self.base_dir_abspath, mapping_tabular)
         # run
@@ -86,8 +88,9 @@ class batch_curation():
                 self.run_sample(sample)
             # remove extracted data files
             shutil.rmtree(self.extracted_datafiles_abspath)
-            # zip the files in the temporary folder into a zip file self.output_dir
-            shutil.make_archive(self.output_dir, 'zip', self.tempdir)
+            # zip the files in the temporary folder into a zip file self.output_zip
+            shutil.make_archive(self.output_zip, 'zip', self.tempdir)
+            print(self.output_zip)
 
     def run_sample(self, sample_mapping):
         # create a folder for each sample using sample id as the name
@@ -128,12 +131,28 @@ class batch_curation():
                         cell.value = sample_mapping[cell.value]
         wb.save(os.path.join(base_dir,master_template))
 
+# use argparse to support command line arguments
+import argparse
+import sys
 
+def readOptions(args=sys.argv[1:]):
+    parser = argparse.ArgumentParser(description="Batch master template generation for batch curation into NanoMine.")
+    parser.add_argument("-b", "--base_dir", help="Type the base directory holding your template, mapping, input zip file, and output zip file.")
+    parser.add_argument("-t", "--master_template", help="Type the file name of your filled master template.")
+    parser.add_argument("-m", "--mapping_tabular", help="Type the file name of your mapping tabular file.")
+    parser.add_argument("-z", "--zipped_datafiles", help="Type the file name of the zip file that contains appendix data files.")
+    parser.add_argument("-o", "--output_zip", help="[Optional] Type the file name for the output zip file. Default to be 'batch_template_output.zip'")
+    opts = parser.parse_args(args)
+    return opts
 
+# Command line operation
 if __name__ == '__main__':
-    base_dir = './example'
-    mapping = 'example_mapping.xlsx'
-    template = 'example_template.xlsx'
-    zipped_datafiles = 'example.zip'
-    bc = batch_curation(base_dir=base_dir, master_template=template,
-        mapping_tabular=mapping,zipped_datafiles=zipped_datafiles)
+    options = readOptions(sys.argv[1:])
+    bc = batch_curation(**vars(options))
+# Example
+# base_dir = './example'
+# mapping = 'example_mapping.xlsx'
+# template = 'example_template.xlsx'
+# zipped_datafiles = 'example.zip'
+# bc = batch_curation(base_dir=base_dir, master_template=template,
+#     mapping_tabular=mapping,zipped_datafiles=zipped_datafiles)
