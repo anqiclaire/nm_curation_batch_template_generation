@@ -137,10 +137,10 @@ import sys
 
 def readOptions(args=sys.argv[1:]):
     parser = argparse.ArgumentParser(description="Batch master template generation for batch curation into NanoMine.")
-    parser.add_argument("-b", "--base_dir", help="Type the base directory holding your template, mapping, input zip file, and output zip file.")
-    parser.add_argument("-t", "--master_template", help="Type the file name of your filled master template.")
-    parser.add_argument("-m", "--mapping_tabular", help="Type the file name of your mapping tabular file.")
-    parser.add_argument("-z", "--zipped_datafiles", help="Type the file name of the zip file that contains appendix data files.")
+    parser.add_argument("-b", "--base_dir", required=True, help="Type the base directory holding your template, mapping, input zip file, and output zip file.")
+    parser.add_argument("-t", "--master_template", required=True, help="Type the file name of your filled master template.")
+    parser.add_argument("-m", "--mapping_tabular", required=True, help="Type the file name of your mapping tabular file.")
+    parser.add_argument("-z", "--zipped_datafiles", required=True, help="Type the file name of the zip file that contains appendix data files.")
     parser.add_argument("-o", "--output_zip", help="[Optional] Type the file name for the output zip file. Default to be 'batch_template_output.zip'")
     opts = parser.parse_args(args)
     return opts
