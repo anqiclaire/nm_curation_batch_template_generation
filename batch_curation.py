@@ -14,6 +14,8 @@ from inp_parser.inp_parser import Parser
 # -------------------------------------------- for command line arguments
 import argparse
 import sys
+# -------------------------------------------- logging
+import logging
 
 class batch_curation():
     def __init__(self, base_dir, master_template, mapping_tabular,
@@ -42,6 +44,10 @@ class batch_curation():
             curation. Default to {base_dir}/batch_template_output.zip
         :type output_zip: str or NoneType
         '''
+        logging.basicConfig(level=logging.INFO, 
+                            filename=f'{base_dir}/batch_curation.log',
+                            format='%(asctime)s - %(message)s',
+                            datefmt='%d-%b-%y %H:%M:%S')
         # save parse_inp option
         self.parse_inp = parse_inp
         self.base_dir_abspath = os.path.abspath(base_dir)
@@ -74,6 +80,7 @@ class batch_curation():
         elif file_ext == '.tsv':
             df = pd.read_csv(os.path.join(base_dir,mapping_tabular),sep='\t')
         else:
+            logging.error('The mapping file must be a .xlsx/.csv/.tsv file.')
             raise Exception('The mapping file must be a .xlsx/.csv/.tsv file.')
         return df
 
@@ -102,6 +109,7 @@ class batch_curation():
             print(self.output_zip)
 
     def run_sample(self, sample_mapping):
+        logging.info(f'Processing {sample_mapping[0]}.')
         # create a folder for each sample using sample id as the name
         # assume sample id is always the first item in sample_mapping
         sample_folder = os.path.join(self.tempdir,sample_mapping[0])
@@ -122,7 +130,9 @@ class batch_curation():
             # call parser if .inp file detected, assume only 1 inp file per sample
             if len(inps) > 1:
                 print(f'Warning: more than 1 inp files detected for \
-    {sample_mapping[0]}, only parsing {inps[0]}.')
+{sample_mapping[0]}, only parsing {inps[0]}.')
+                logging.warning(f'More than 1 inp files detected for \
+{sample_mapping[0]}, only parsing {inps[0]}.')
             if inps:
                 # skip *Equation and *Nset
                 parser = Parser(inps[0], skip={'*Equation','*Nset'})
@@ -164,6 +174,7 @@ class batch_curation():
                         if v:
                             if row[i+1].value is not None:
                                 print(f'Warning: {row[i+1]} with value {row[i+1].value} overwritten as {v}')
+                                logging.warning(f'{row[i+1]} with value {row[i+1].value} overwritten as {v}')
                             row[i+1].value = v
         wb.save(os.path.join(base_dir,master_template))
 

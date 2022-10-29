@@ -1,1 +1,5 @@
 test
+example/output.zip
+inp_parser/__pycache__/
+inp_parser/20_10_500_0_0.0_0.15_1_58.inp
+*.log
