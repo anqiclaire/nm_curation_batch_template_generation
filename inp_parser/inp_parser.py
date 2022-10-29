@@ -44,6 +44,7 @@ more than once for {self.name}')
         '''
         Convert the object to a dict with curatable information.
         Use the name in the Excel template as key.
+        Value should be a list with positional mapping [col B, col C, col D]
         '''
         return {}
 
@@ -52,10 +53,11 @@ class Element(Section):
     def to_dict(self):
         template = {}
         # save number of elements
-        template['Number of Elements'] = self.nrows
+        template['Number of Elements'] = ['inserted by inp_parser', self.nrows]
         # save element type
         if 'TYPE' in self.attr:
-            template['Element Type - Abaqus'] = self.attr['TYPE']
+            template['Element Type - Abaqus'] = ['inserted by inp_parser',
+                                                 self.attr['TYPE']]
         return template
 
 class SteadyStateDynamics(Section):
@@ -70,11 +72,14 @@ class SteadyStateDynamics(Section):
     def to_dict(self):
         template = {}
         if 'fmin' in self.value:
-            template['Min frequency'] = self.value['fmin']
+            template['Min frequency'] = ['inserted by inp_parser',
+                                         self.value['fmin']]
         if 'fmax' in self.value:
-            template['Max frequency'] = self.value['fmax']
+            template['Max frequency'] = ['inserted by inp_parser', 
+                                         self.value['fmax']]
         if 'num_freq' in self.value:
-            template['Number of Frequency Intervals'] = self.value['num_freq']
+            template['Number of Frequency Intervals'] = ['', 
+                                                         self.value['num_freq']]
         return template
 
 class Elastic(Section):
@@ -138,18 +143,20 @@ class Boundary(Section):
     def to_dict(self):
         template = {}
         sign = '+' # keep magnitude positve, put as prefix of x,y,z direction
-        template['Boundary Condition Type'] = self.refmap[self.attr['TYPE']]
-        if 'magnitude' in self.value:
-            if self.value['magnitude'] < 0:
-                sign = '-' # update sign
-            template['Magnitude'] = abs(self.value['magnitude'])
-        if 'first_dof' in self.value and 'last_dof' in self.value:
-            directions = ['x','y','z','end']
-            template['Direction'] = template.get('Direction',[])
-            for i in range(self.value['first_dof'],self.value['last_dof']+1):
-            # self.value['first_dof'] == 1 maps to 'x', 2 maps to 'y'
-            # 'x', 'y', 'z', accessed by directions[i-1]
-                template['Direction'].append(sign + directions[i-1])
+        template['Boundary Condition Type'] = [self.refmap[self.attr['TYPE']]]
+        # disable Magnitude and Direction for now
+        # if 'magnitude' in self.value:
+        #     if self.value['magnitude'] < 0:
+        #         sign = '-' # update sign
+        #     template['Magnitude'] = ['inserted by inp_parser',
+        #                              abs(self.value['magnitude'])]
+        # if 'first_dof' in self.value and 'last_dof' in self.value:
+        #     directions = ['x','y','z','end']
+        #     template['Direction'] = template.get('Direction',[])
+        #     for i in range(self.value['first_dof'],self.value['last_dof']+1):
+        #     # self.value['first_dof'] == 1 maps to 'x', 2 maps to 'y'
+        #     # 'x', 'y', 'z', accessed by directions[i-1]
+        #         template['Direction'].append(sign + directions[i-1])
         return template
     
 class Parser():
@@ -207,7 +214,7 @@ class Parser():
         '''
         Generate the dict that contains all information that goes into the Excel
         '''
-        template = {'Software Used': 'Abaqus'}
+        template = {'Software Used': ['Abaqus']}
         # update the dict, assume no duplicated keys exist
         print('Warning: duplicated keys will be overwritten!')
         for sec in self.sections:
