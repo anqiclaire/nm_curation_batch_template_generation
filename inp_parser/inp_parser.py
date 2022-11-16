@@ -70,7 +70,9 @@ class SteadyStateDynamics(Section):
         self.value['num_freq'] = int(segs[2])
     # overwrite the to_dict method
     def to_dict(self):
-        template = {}
+        # the presence of this object infers
+        # "Steady state dynamic" for "Loading Type"
+        template = {'Loading Type': ['', 'Steady state dynamic']}
         if 'fmin' in self.value:
             template['Min frequency'] = ['inserted by inp_parser',
                                          self.value['fmin']]
