@@ -14,7 +14,7 @@ import logging
 # configure logging
 logging.basicConfig(
     level=logging.INFO, 
-    filename='batch_curation_preparation.log',
+    filename='bc_prep_log.log',
     format='%(asctime)s - %(message)s',
     datefmt='%d-%b-%y %H:%M:%S'
 )
@@ -126,16 +126,23 @@ if __name__ == '__main__':
         help="Special placeholders used in the template file.")
     parser.add_argument("-m", "--mapping_to", default='sample_mapping.csv',
         type=str, help="The file name to dump sample mapping table.")
+    parser.add_argument("-t", "--master_template", required=True,
+        help="Type the file name of your filled master template.")
     args = parser.parse_args()
 
     # make the folder for export if not exist
     if not os.path.exists(args.export_dir):
         os.makedirs(args.export_dir)
+        logging.info(f'Export directory created at {args.export_dir}')
+    # copy the template into the export dir
+    shutil.copy(args.master_template,
+        os.path.join(args.export_dir,args.master_template))
+    logging.info(f'Master template {args.master_template} copied to the export dir.')
 
     prepare_batch_curation(
         json_dir=args.json_dir,
         base_dir=args.base_dir,
         zip_to=os.path.join(args.export_dir,args.zip_to),
         columns_out=args.columns_out,
-        mapping_to=os.path.join(args.export_dir,args.mapping_to)
+        mapping_to=os.path.join(args.export_dir,args.mapping_to),
     )
