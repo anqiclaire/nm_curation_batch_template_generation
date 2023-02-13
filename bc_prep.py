@@ -100,6 +100,9 @@ def prepare_batch_curation(json_dir, base_dir='./', zip_to='./datafiles.zip', co
     logging.info('Temporary directory created.')
     # update filenames and copy/paste datafiles to td
     df = update_df_filename(df,td.name)
+    # trim .zip from zip_to if present
+    if '.zip' in zip_to and zip_to[-4:] == '.zip':
+       zip_to = zip_to[:-4]
     # zip everything in temporary directory to zip_to
     shutil.make_archive(zip_to, 'zip', td.name)
     logging.info(f'Files in the temporary directory are archived to {zip_to}.')
