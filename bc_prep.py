@@ -87,6 +87,10 @@ def prepare_batch_curation(json_dir, base_dir='./', zip_to='./datafiles.zip', co
     # SID, temporary, maybe sort the df first
     df['SID'] = df.index
     df['SID'] = df['SID'].apply(lambda x:f"S{x+1}")
+    # ParRu and ParRv are radius, in the template, we need diameter
+    # double both values
+    df['ParRu'] = 2*df['ParRu']
+    df['ParRv'] = 2*df['ParRv']
     # batch rename columns
     df = df.rename(columns={col[1:]:col for col in columns_out}, errors="raise")
     # select and order by columns_out
